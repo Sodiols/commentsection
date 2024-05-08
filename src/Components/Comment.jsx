@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 function Comment() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [editIndex, setEditIndex] = useState(null);
+  const [editText, setEditText] = useState('');
 
   const randomNames = ['sodiol', 'sayem', 'sabbir', 'jin', 'manik', 'francis', 'nitol', 'tahmid'];
 
@@ -20,6 +22,24 @@ function Comment() {
     }
   };
 
+  const handleDelete = (index) => {
+    const updatedComments = [...comments];
+    updatedComments.splice(index, 1);
+    setComments(updatedComments);
+  };
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setEditText(comments[index].text);
+  };
+
+  const handleSaveEdit = () => {
+    const updatedComments = [...comments];
+    updatedComments[editIndex].text = editText;
+    setComments(updatedComments);
+    setEditIndex(null);
+  };
+
   return (
     <div className='comment'>
       <div className="comment-box">
@@ -27,8 +47,24 @@ function Comment() {
         <ul>
           {comments.map((comment, index) => (
             <li key={index}>
-              <strong>{comment.name}:</strong> {comment.text}
-            </li>
+              {editIndex === index ? (
+                <>
+                  <input
+                    type="text"
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                  />
+                  <button onClick={handleSaveEdit}>Save</button>
+                </>
+              ) : (
+                <>
+                  <strong>{comment.name}:</strong> {comment.text}
+                  <button onClick={() => handleDelete(index)}>Delete</button>
+                  <button onClick={() => handleEdit(index)}>Edit</button>
+                </>
+              )}
+            </li> 
+            
           ))}
         </ul>
         <form onSubmit={handleSubmit}>
